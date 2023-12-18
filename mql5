@@ -1,0 +1,140 @@
+
+// Developer: Forex Robot Easy Team
+// Developer's Site: forexroboteasy.com
+
+// Include necessary libraries and dependencies
+#include <Trade\Trade.mqh>
+#include <Trade\PositionInfo.mqh>
+#include <Trade\AccountInfo.mqh>
+#include <Trade\OrderSendResult.mqh>
+
+// Define constants for price offset options
+#define PRICE_OFFSET_LOW 10  // Low risk tolerance
+#define PRICE_OFFSET_MEDIUM 20  // Medium risk tolerance
+#define PRICE_OFFSET_HIGH 30  // High risk tolerance
+
+// Define constants for stop loss and take profit levels
+#define STOP_LOSS_LEVEL 50  // Default stop loss level
+#define TAKE_PROFIT_LEVEL 100  // Default take profit level
+
+// Define trading set structure
+struct TradingSet {
+   double priceOffset;
+   double stopLoss;
+   double takeProfit;
+};
+
+// Define an array to store trading sets
+TradingSet tradingSets[];
+
+// Define the current trading set index
+int currentTradingSetIndex = 0;
+
+// Define the trading instrument (DE40 index by default)
+string tradingInstrument = 'DE40';
+
+// Define the trading software class
+class RexIIIClawVsClusterIIIEA {
+private:
+   // Define private variables and methods
+   
+public:
+   // Define public variables and methods
+   
+   // Constructor
+   RexIIIClawVsClusterIIIEA() {
+      // Initialize trading sets with default values
+      TradingSet set1;
+      set1.priceOffset = PRICE_OFFSET_LOW;
+      set1.stopLoss = STOP_LOSS_LEVEL;
+      set1.takeProfit = TAKE_PROFIT_LEVEL;
+      
+      TradingSet set2;
+      set2.priceOffset = PRICE_OFFSET_MEDIUM;
+      set2.stopLoss = STOP_LOSS_LEVEL;
+      set2.takeProfit = TAKE_PROFIT_LEVEL;
+      
+      TradingSet set3;
+      set3.priceOffset = PRICE_OFFSET_HIGH;
+      set3.stopLoss = STOP_LOSS_LEVEL;
+      set3.takeProfit = TAKE_PROFIT_LEVEL;
+      
+      // Add trading sets to the array
+      tradingSets[0] = set1;
+      tradingSets[1] = set2;
+      tradingSets[2] = set3;
+   }
+   
+   // Method to set the price offset
+   void setPriceOffset(double offset) {
+      tradingSets[currentTradingSetIndex].priceOffset = offset;
+   }
+   
+   // Method to set the stop loss level
+   void setStopLoss(double stopLoss) {
+      tradingSets[currentTradingSetIndex].stopLoss = stopLoss;
+   }
+   
+   // Method to set the take profit level
+   void setTakeProfit(double takeProfit) {
+      tradingSets[currentTradingSetIndex].takeProfit = takeProfit;
+   }
+   
+   // Method to switch trading sets
+   void switchTradingSet(int index) {
+      if (index >= 0 && index < ArraySize(tradingSets)) {
+         currentTradingSetIndex = index;
+      }
+   }
+   
+   // Method to switch trading instruments
+   void switchTradingInstrument(string instrument) {
+      tradingInstrument = instrument;
+   }
+   
+   // Method to execute a trade
+   bool executeTrade(double entryPrice) {
+      double stopLoss = tradingSets[currentTradingSetIndex].stopLoss;
+      double takeProfit = tradingSets[currentTradingSetIndex].takeProfit;
+      
+      // Calculate the stop loss and take profit levels based on the entry price and price offset
+      double calculatedStopLoss = entryPrice - tradingSets[currentTradingSetIndex].priceOffset;
+      double calculatedTakeProfit = entryPrice + tradingSets[currentTradingSetIndex].priceOffset;
+      
+      // Execute the trade and set the stop loss and take profit levels
+      if (OrderSendResult.Reserved != OrderSend(tradingInstrument, OP_BUY, 0.01, entryPrice, 0, calculatedStopLoss, calculatedTakeProfit)) {
+         Print('Error executing trade');
+         return false;
+      }
+      
+      return true;
+   }
+   
+   // Method to analyze trade performance
+   void analyzePerformance() {
+      // Perform performance analysis and display the results
+      // ...
+   }
+   
+   // Method to display the user interface
+   void displayUI() {
+      // Display the user interface and allow traders to navigate and access the various features and settings
+      // ...
+   }
+};
+
+// Entry point of the program
+void OnStart() {
+   // Create an instance of the trading software
+   RexIIIClawVsClusterIIIEA tradingSoftware;
+   
+   // Display the user interface
+   tradingSoftware.displayUI();
+   
+   // Execute a trade
+   double entryPrice = 100.00;  // Example entry price
+   tradingSoftware.executeTrade(entryPrice);
+   
+   // Analyze trade performance
+   tradingSoftware.analyzePerformance();
+}
